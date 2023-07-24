@@ -14,6 +14,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, '../dist/client'),
         filename: "bundle.client.js",
+        clean: true
     },
     module: {
         rules: [
@@ -23,18 +24,37 @@ module.exports = {
                 use: {
                     loader: "babel-loader"
                 }
+            },
+            {
+                test: /\.(png|jpg|gif|env|glb|gltf|stl)$/i,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            limit: 8192,
+                            publicPath: "/",
+                            name: '[name].[ext]',
+                            outputPath: 'assets'
+                        }
+                    }
+                ]
             }
         ]
     },
     plugins: [
-        new HtmlWebpackPlugin({template: 'src/index.html'}),
+        new HtmlWebpackPlugin(
+            {
+                inject: true,
+                template: 'src/index.html',
+            }),
         new CleanWebpackPlugin(),
     ],
     devServer: {
         static: "dist",
         hot: true,
         devMiddleware: {
-            writeToDisk: true
+            writeToDisk: true,
+            publicPath: "/"
         },
         open: true
     },
